@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鐘形曲線 — 機率教學</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-depth="module">
+  <div class="container">
+    <h1 class="page-title">鐘形曲線視覺化</h1>
+    <p class="page-desc">輸入硬幣數量，以 BigInt 精確計算 C(n,k) 組合數並繪製對數縮放長條圖。</p>
+    <div class="control-panel">
+      <div class="control-row">
+        <div class="form-group">
+          <label for="coin-count">硬幣數量（1–100）</label>
+          <input type="number" id="coin-count" min="1" max="100" value="20">
+        </div>
+        <button class="btn btn-primary" id="btn-draw">繪製</button>
+      </div>
+    </div>
+    <div class="chart-panel">
+      <div id="bell-chart" class="bell-chart"></div>
+    </div>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/modules/bell-curve.js"></script>
+</body>
+</html>

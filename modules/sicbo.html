@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>固定平注模擬 — 機率教學</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-depth="module">
+  <div class="container">
+    <h1 class="page-title">賭場連續下注模擬 A — 固定平注</h1>
+    <p class="page-desc">骰寶大/小固定金額連續下注，開豹子兩邊皆輸（勝率約 48.6%）。</p>
+    <div class="control-panel">
+      <div class="control-row">
+        <div class="form-group">
+          <label for="initial">初始本金</label>
+          <input type="number" id="initial" min="1" value="1000">
+        </div>
+        <div class="form-group">
+          <label for="bet">每把下注額</label>
+          <input type="number" id="bet" min="1" value="10">
+        </div>
+        <div class="form-group">
+          <label for="rounds">模擬次數（1–1000）</label>
+          <input type="number" id="rounds" min="1" max="1000" value="500">
+        </div>
+        <div class="form-group">
+          <label for="bet-side">下注方向</label>
+          <select id="bet-side">
+            <option value="big">大</option>
+            <option value="small">小</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btn-run">開始模擬</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-label">已進行局數</div><div class="stat-value" id="stat-rounds">0</div></div>
+      <div class="stat-item"><div class="stat-label">豹子次數</div><div class="stat-value" id="stat-triple">0</div></div>
+      <div class="stat-item"><div class="stat-label">總損益</div><div class="stat-value" id="stat-profit">0</div></div>
+    </div>
+    <p id="sim-status" class="page-desc"></p>
+    <div class="chart-panel"><div id="chart"></div></div>
+  </div>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/sicbo-engine.js"></script>
+  <script src="../js/modules/sicbo-sim.js"></script>
+  <script src="../js/modules/sicbo-sim-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>二項分配 — 機率教學</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-depth="module">
+  <div class="container">
+    <h1 class="page-title">硬幣二項分配分析</h1>
+    <p class="page-desc">分析 n 次擲硬幣中正面（H）出現次數的機率分布。</p>
+    <div class="control-panel">
+      <div class="control-row">
+        <div class="form-group">
+          <label for="coin-count">硬幣數量（1–100）</label>
+          <input type="number" id="coin-count" min="1" max="100" value="8">
+        </div>
+        <button class="btn btn-primary" id="btn-analyze">分析</button>
+      </div>
+    </div>
+    <span class="mode-badge" id="mode-badge"></span>
+    <div id="coin-list" class="coin-list"></div>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/modules/coin.js"></script>
+</body>
+</html>
