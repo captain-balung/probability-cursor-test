@@ -26,6 +26,9 @@
       const wrap = document.createElement('div');
       wrap.className = 'bell-bar-wrap';
 
+      const stack = document.createElement('div');
+      stack.className = 'bell-bar-stack';
+
       const countEl = document.createElement('div');
       countEl.className = 'bar-count';
       countEl.textContent = AppUtils.formatBigInt(count);
@@ -33,15 +36,16 @@
       const bar = document.createElement('div');
       bar.className = 'bell-bar';
       const logH = Math.log(Number(count) + 1) / maxLog;
-      bar.style.height = Math.max(2, logH * 220) + 'px';
+      bar.style.height = Math.max(2, logH * 180) + 'px';
       bar.title = `k=${k}: C(${n},${k}) = ${count.toString()}`;
 
       const label = document.createElement('div');
       label.className = 'bar-label';
       label.textContent = k;
 
-      wrap.appendChild(countEl);
-      wrap.appendChild(bar);
+      stack.appendChild(countEl);
+      stack.appendChild(bar);
+      wrap.appendChild(stack);
       wrap.appendChild(label);
       chart.appendChild(wrap);
     });

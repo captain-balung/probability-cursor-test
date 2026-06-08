@@ -9,13 +9,9 @@
   const btnClear = document.getElementById('btn-clear');
   const btnReset = document.getElementById('btn-reset');
   const resultMsg = document.getElementById('result-msg');
-  const diceEls = [
-    document.getElementById('die1'),
-    document.getElementById('die2'),
-    document.getElementById('die3'),
-  ];
   const tableEl = document.getElementById('bet-table');
 
+  let diceEls = [];
   let bankroll = 0;
   let selectedChip = 10;
   let activeBets = new Map();
@@ -32,53 +28,100 @@
     return bet.type;
   }
 
+  function cell(bet, cls, inner) {
+    return `<div class="bet-cell ${cls}" data-bet='${JSON.stringify(bet)}'>${inner}</div>`;
+  }
+
   function buildTable() {
-    let html = '';
-
-    html += `<div class="bet-section"><h3>大 / 小</h3><div class="bet-grid">
-      <div class="bet-cell" data-bet='{"type":"big"}'>大<span class="bet-odds">1:1</span></div>
-      <div class="bet-cell" data-bet='{"type":"small"}'>小<span class="bet-odds">1:1</span></div>
-    </div></div>`;
-
-    html += `<div class="bet-section"><h3>單點 1–6</h3><div class="bet-grid">`;
-    for (let f = 1; f <= 6; f++) {
-      html += `<div class="bet-cell" data-bet='{"type":"single","face":${f}}'>${f}<span class="bet-odds">1/2/3:1</span></div>`;
-    }
-    html += `</div></div>`;
-
-    html += `<div class="bet-section"><h3>指定對子</h3><div class="bet-grid">`;
-    for (let f = 1; f <= 6; f++) {
-      html += `<div class="bet-cell" data-bet='{"type":"pair","face":${f}}'>對${f}<span class="bet-odds">10:1</span></div>`;
-    }
-    html += `</div></div>`;
-
-    html += `<div class="bet-section"><h3>豹子</h3><div class="bet-grid">
-      <div class="bet-cell" data-bet='{"type":"anyTriple"}'>任意豹子<span class="bet-odds">30:1</span></div>`;
-    for (let f = 1; f <= 6; f++) {
-      html += `<div class="bet-cell" data-bet='{"type":"specificTriple","face":${f}}'>${f}-${f}-${f}<span class="bet-odds">180:1</span></div>`;
-    }
-    html += `</div></div>`;
-
-    html += `<div class="bet-section"><h3>兩點組合 Domino</h3><div class="bet-grid">`;
-    SicBoEngine.DOMINO_PAIRS.forEach(([a, b]) => {
-      html += `<div class="bet-cell" data-bet='{"type":"domino","pair":[${a},${b}]}'>${a}-${b}<span class="bet-odds">5:1</span></div>`;
-    });
-    html += `</div></div>`;
-
-    html += `<div class="bet-section"><h3>總和 4–17</h3><div class="bet-grid">`;
     const totals = [
       [4, 60], [5, 30], [6, 18], [7, 12], [8, 8], [9, 6], [10, 6],
       [11, 6], [12, 6], [13, 8], [14, 12], [15, 18], [16, 30], [17, 60],
     ];
+
+    let html = '<div class="felt-layout">';
+
+    /* 第一列：小 | 骰子 | 大 */
+    html += `<div class="felt-row felt-row-top">
+      ${cell({ type: 'small' }, 'felt-bs', '小<span class="bet-odds">4–10 · 1:1</span>')}
+      <div class="felt-dice-zone">
+        <div class="dice-display">
+          <div class="die" id="die1">?</div>
+          <div class="die" id="die2">?</div>
+          <div class="die" id="die3">?</div>
+        </div>
+      </div>
+      ${cell({ type: 'big' }, 'felt-bs', '大<span class="bet-odds">11–17 · 1:1</span>')}
+    </div>`;
+
+    /* 總和 4–17 橫列 */
+    html += '<div class="felt-section-label">總 和</div><div class="felt-row felt-row-totals">';
     totals.forEach(([sum, odds]) => {
-      html += `<div class="bet-cell" data-bet='{"type":"total","sum":${sum}}'>${sum}<span class="bet-odds">${odds}:1</span></div>`;
+      html += cell(
+        { type: 'total', sum },
+        'felt-total',
+        `<span class="bet-sum">${sum}</span><span class="bet-odds">${odds}:1</span>`
+      );
     });
-    html += `</div></div>`;
+    html += '</div>';
+
+    /* 單點 1–6 */
+    html += '<div class="felt-section-label">單 點</div><div class="felt-row felt-row-singles">';
+    for (let f = 1; f <= 6; f++) {
+      html += cell(
+        { type: 'single', face: f },
+        'felt-single',
+        `<span class="die-face">${f}</span><span class="bet-odds">1/2/3:1</span>`
+      );
+    }
+    html += '</div>';
+
+    /* 左：豹子+對子 | 右：Domino */
+    html += '<div class="felt-main">';
+
+    html += '<div class="felt-left-col">';
+    html += '<div class="felt-section-label">豹 子</div><div class="felt-triples">';
+    html += cell({ type: 'anyTriple' }, 'felt-triple-any', '全圍<span class="bet-odds">30:1</span>');
+    for (let f = 1; f <= 6; f++) {
+      html += cell(
+        { type: 'specificTriple', face: f },
+        'felt-triple-spec',
+        `${f}${f}${f}<span class="bet-odds">180:1</span>`
+      );
+    }
+    html += '</div>';
+
+    html += '<div class="felt-section-label">對 子</div><div class="felt-pairs">';
+    for (let f = 1; f <= 6; f++) {
+      html += cell(
+        { type: 'pair', face: f },
+        'felt-pair',
+        `對${f}<span class="bet-odds">10:1</span>`
+      );
+    }
+    html += '</div></div>';
+
+    html += '<div class="felt-right-col">';
+    html += '<div class="felt-section-label">兩 點 組 合</div><div class="felt-domino">';
+    SicBoEngine.DOMINO_PAIRS.forEach(([a, b]) => {
+      html += cell(
+        { type: 'domino', pair: [a, b] },
+        'felt-domino',
+        `${a} · ${b}<span class="bet-odds">5:1</span>`
+      );
+    });
+    html += '</div></div>';
+
+    html += '</div></div>';
 
     tableEl.innerHTML = html;
+    diceEls = [
+      document.getElementById('die1'),
+      document.getElementById('die2'),
+      document.getElementById('die3'),
+    ];
 
-    tableEl.querySelectorAll('.bet-cell').forEach((cell) => {
-      cell.addEventListener('click', () => onBetCell(cell));
+    tableEl.querySelectorAll('.bet-cell').forEach((c) => {
+      c.addEventListener('click', () => onBetCell(c));
     });
   }
 
@@ -155,7 +198,7 @@
     btnClear.disabled = true;
     resultMsg.textContent = '請設定本金後開始遊戲';
     resultMsg.className = 'result-msg';
-    diceEls.forEach((d) => { d.textContent = '?'; d.classList.remove('rolling'); });
+    diceEls.forEach((d) => { if (d) { d.textContent = '?'; d.classList.remove('rolling'); } });
     tableEl.querySelectorAll('.bet-cell').forEach((c) => {
       c.classList.remove('active');
       const s = c.querySelector('.bet-stake');
@@ -210,7 +253,7 @@
     const triple = SicBoEngine.isTriple(dice);
     let msg = `🎲 ${dice.join(' + ')} = ${total}`;
     if (triple) msg += '（豹子）';
-    msg += `｜`;
+    msg += '｜';
     if (net > 0) {
       msg += `贏 ${fmt(net)}！`;
       resultMsg.className = 'result-msg win';
